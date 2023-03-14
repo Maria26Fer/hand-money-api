@@ -9,3 +9,72 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  profile    Profile?
+  wallet     Wallet?
+  cards      Card[]
+
+  @@map("users")
+}
+
+model Profile {
+  id         String @id @default(uuid())
+  name       String
+  email      String @unique
+  url_avatar String
+  user       User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String @unique
+
+  @@map("profiles")
+}
+
+model Category {
+  id          String       @id @default(uuid())
+  title       String
+  color       String
+  Transaction Transaction?
+
+  @@map("categorys")
+}
+
+model Card {
+  id          String @id @default(uuid())
+  alias       String
+  type        String
+  lastNumbers Int?
+
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String @unique
+
+  @@unique([id, user_id])
+  @@map("cards")
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  category_id String   @unique
+  category    Category @relation(fields: [category_id], references: [id])
+  description String?
+  type        String
+  title       String
+  value       Int
+  wallet      Wallet?  @relation(fields: [wallet_id], references: [id])
+  wallet_id   String?
+
+  @@unique([id, wallet_id])
+  @@map("transactions")
+}
+
+model Wallet {
+  id           String        @id @default(uuid())
+  user         User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id      String        @unique
+  transactions Transaction[]
+
+  @@unique([id, user_id])
+  @@map("wallets")
+}
