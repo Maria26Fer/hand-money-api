@@ -1,26 +1,41 @@
 import { FastifyInstance } from "fastify";
-import categoryController from "../controllers/categoryController";
-import userController from "../controllers/userController";
+import userController from "../controllers/user";
+import cardController from "../controllers/card";
+import categoryController from "../controllers/category";
+import transactionController from "../controllers/transaction";
 
 export const appRoutes = async (app: FastifyInstance) => {
+  app.get("/users", userController.list);
 
-  app.get("/", (_, res) => res.send({ Hello: "word" }));
+  app.post("/users", userController.insert);
 
-  app.get("/users", userController.getUsers);
+  app.patch("/users/:id", userController.update);
 
-  app.post("/users", userController.insertUser);
+  app.delete("/users/:id", userController.delete);
 
-  app.delete("/users/:id", userController.deleteUser);
+  app.get("/user/cards/:id", cardController.list);
 
-  app.patch("/users/:id", userController.updateUser);
+  app.post("/user/cards", cardController.insert);
 
-  app.get("/category", categoryController.getCategories);
+  app.patch("/user/cards/:id", cardController.update);
 
-  app.post("/category", categoryController.insertCategory);
+  app.delete("/user/cards/:id", cardController.delete);
 
-  app.delete("/category/:id", categoryController.deleteCategory);
+  app.get("/category", categoryController.list);
 
-  app.patch("/category/:id", categoryController.updateCategory);
+  app.post("/category", categoryController.insert);
+
+  app.patch("/category/:id", categoryController.update);
+
+  app.delete("/category/:id", categoryController.delete);
+
+  app.get("/user/wallet/transactions/:id", transactionController.list);
+
+  app.post("/user/wallet/transaction/:id", transactionController.insert);
+
+  app.patch("/user/wallet/transaction/:id", transactionController.update);
+
+  app.delete("/user/wallet/transaction/:id", transactionController.delete);
 
   return app;
 };
