@@ -26,17 +26,17 @@ model Profile {
   name       String
   email      String @unique
   url_avatar String
-  user       User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user       User   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user_id    String @unique
 
   @@map("profiles")
 }
 
 model Category {
-  id          String       @id @default(uuid())
+  id          String        @id @default(uuid())
   title       String
   color       String
-  Transaction Transaction?
+  Transaction Transaction[]
 
   @@map("categorys")
 }
@@ -45,35 +45,34 @@ model Card {
   id          String @id @default(uuid())
   alias       String
   type        String
-  lastNumbers Int?
+  lastNumbers Int?   @unique
 
   user    User   @relation(fields: [user_id], references: [id])
-  user_id String @unique
+  user_id String
 
-  @@unique([id, user_id])
   @@map("cards")
 }
 
 model Transaction {
   id          String   @id @default(uuid())
-  category_id String   @unique
   category    Category @relation(fields: [category_id], references: [id])
+  category_id String
   description String?
   type        String
   title       String
-  value       Int
-  wallet      Wallet?  @relation(fields: [wallet_id], references: [id])
-  wallet_id   String?
+  value       Float
+  wallet      Wallet   @relation(fields: [wallet_id], references: [id])
+  wallet_id   String
 
   @@unique([id, wallet_id])
   @@map("transactions")
 }
 
 model Wallet {
-  id           String        @id @default(uuid())
-  user         User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id      String        @unique
-  transactions Transaction[]
+  id          String        @id @default(uuid())
+  user        User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     String        @unique
+  Transaction Transaction[]
 
   @@unique([id, user_id])
   @@map("wallets")
